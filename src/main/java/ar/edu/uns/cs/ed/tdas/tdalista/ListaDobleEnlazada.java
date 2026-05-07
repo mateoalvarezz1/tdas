@@ -202,9 +202,7 @@ public class ListaDobleEnlazada<E> implements PositionList<E> {
 
     public int cantveces(E e1){
         int cveces =0;
-        Iterator<E> it = this.iterator();
-        while (it.hasNext()) {
-            E elem =  it.next();
+        for (E elem : this) {
             if(elem.equals(e1))
                 cveces++;
         }
@@ -236,15 +234,22 @@ public class ListaDobleEnlazada<E> implements PositionList<E> {
     public Iterable<E> interseccion(PositionList<E> l1, PositionList<E> l2){
         //utilizar metodo contiene casteando o recorriendo manualmente con un iterador
         PositionList<E> eliminados = new ListaDobleEnlazada();
-        for(Position<E> p : l2.positions()){
-            E elem = p.element();
-            //preguntar por casteo
-            if(((ListaDobleEnlazada) l1).contiene(elem)){
-                eliminados.addLast(elem);
-                l2.remove(p);
+        
+        for(E elem: l1){
+            for(Position<E> elem2: l2.positions()){
+                if(elem2.element().equals(elem)){
+                    l2.remove(elem2);
+                    eliminados.addLast(elem2.element());
+                }
             }
         }
+
         return eliminados;
+    }
+
+    public PositionList<E> intercalar(PositionList<E> l1, PositionList l2){
+        //problemas al intercalar l1>l2 | l1<l2 | l1=l2        
+
     }
 
 
