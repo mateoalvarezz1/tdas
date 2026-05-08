@@ -1,11 +1,12 @@
 package ar.edu.uns.cs.ed.tdas.tdamapeo;
 
 import ar.edu.uns.cs.ed.tdas.Entry;
+import ar.edu.uns.cs.ed.tdas.Position;
 import ar.edu.uns.cs.ed.tdas.tdalista.ListaDobleEnlazada;
 
 public class MapeoConLista<K, V> implements Map<K, V>{
 
-    protected ListaDobleEnlazada<Entry<K,V>> S;
+    protected ListaDobleEnlazada<Entrada<K,V>> S;
     private int n;
 
     public MapeoConLista(){
@@ -24,7 +25,7 @@ public class MapeoConLista<K, V> implements Map<K, V>{
 
     @Override
     public V get(K key) {
-        for(Entry<K,V> e : S){
+        for(Entrada<K,V> e : S){
             if(e.getKey().equals(key))
                 return e.getValue();
         }
@@ -34,35 +35,59 @@ public class MapeoConLista<K, V> implements Map<K, V>{
 
     @Override
     public V put(K key, V value) {
-        for(Entry<K,V> e : S){
+        for(Entrada<K,V> e : S){
             if(e.getKey().equals(key)){
+                V valor = e.getValue();
                 e.setValue(value);
+                return valor;
             }
         }
+        S.addLast(new Entrada<>(key, value));
+        n++;
+        return null;
+
     }
 
     @Override
     public V remove(K key) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'remove'");
+        for(Position<Entrada<K,V>> p : S.positions()){
+            if(p.element().getKey().equals(key)){
+                V valor = p.element().getValue();
+                S.remove(p);
+                n--;
+                return valor;
+            }
+        }
+        return null;
     }
 
     @Override
     public Iterable<K> keys() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'keys'");
+        ListaDobleEnlazada<K> llaves = new ListaDobleEnlazada<>();
+        for(Entrada<K,V> e : S){
+            llaves.addLast(e.getKey());
+        }
+
+        return llaves;
     }
 
     @Override
     public Iterable<V> values() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'values'");
+        ListaDobleEnlazada<V> valor = new ListaDobleEnlazada<>();
+        for(Entrada<K,V> e : S){
+            valor.addLast(e.getValue());
+        }
+
+        return valor;
     }
 
     @Override
     public Iterable<Entry<K, V>> entries() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'entries'");
+        ListaDobleEnlazada<Entry<K,V>> lista = new ListaDobleEnlazada<>();
+        for(Entrada<K,V> e : S){
+            lista.addLast(e);
+        }
+        return lista;
     }
     
 }
