@@ -21,7 +21,7 @@ public class MapTest {
 
 	private Map<Integer, Integer> getMapeo() {
 
-		return new MapeoConHash<Integer, Integer>();
+		return new MapeoConHashAbierto<Integer, Integer>();
 
 	}
 

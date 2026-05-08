@@ -1,6 +1,7 @@
 package ar.edu.uns.cs.ed.tdas.tdamapeo;
 import ar.edu.uns.cs.ed.tdas.tdalista.ListaDobleEnlazada;
 import ar.edu.uns.cs.ed.tdas.Entry;
+import ar.edu.uns.cs.ed.tdas.excepciones.InvalidKeyException;
 
 public class MapeoConHashAbierto<K,V> implements Map<K,V>{
 
@@ -13,17 +14,23 @@ public class MapeoConHashAbierto<K,V> implements Map<K,V>{
         A = new MapeoConLista[11];
         n=0;
         N=11;
+        for(int i = 0; i < N; i++){
+            A[i] = new MapeoConLista<>();
+    }
     }
     @SuppressWarnings("unchecked")
     public MapeoConHashAbierto(int t){
         A = new MapeoConLista[t];
         N = t;
         n=0;
+        for(int i = 0; i < N; i++){
+            A[i] = new MapeoConLista<>();
+    }
     }
 
     @Override
     public int size() {
-        return N;
+        return n;
     }
 
     @Override
@@ -33,18 +40,38 @@ public class MapeoConHashAbierto<K,V> implements Map<K,V>{
 
     @Override
     public V get(K key) {
+        if(key == null) throw new InvalidKeyException("clave nula");
         return A[h(key)].get(key);
     }
 
     @Override
     public V put(K key, V value) {
+        if(key == null) throw new InvalidKeyException("clave nula");
+        if((double)n / N >= 0.9){
+            int Nnuevo = siguientePrimo(2*N);
+            MapeoConLista<K,V>[] B = new MapeoConLista[Nnuevo];
+
+            for(int i=0;i<Nnuevo;i++){
+                B[i] = new MapeoConLista<>();
+            }
+
+            for(int i=0;i<N;i++){
+                for(Entry<K,V> e : A[i].entries()){
+                    int pos = Math.abs(e.getKey().hashCode()) % Nnuevo;
+                    B[pos].put(e.getKey(), e.getValue());
+                }
+            }
+            A = B;
+            N = Nnuevo;
+        }
         V valor = A[h(key)].put(key, value);
-        if(valor == null) n++;
-        return valor;
+            if(valor == null) n++;
+                return valor;
     }
 
     @Override
     public V remove(K key) {
+        if(key == null) throw new InvalidKeyException("clave nula");
         V valor = A[h(key)].remove(key);
         if(valor!=null) n--;
         return valor;
@@ -90,4 +117,34 @@ public class MapeoConHashAbierto<K,V> implements Map<K,V>{
         return Math.abs(key.hashCode()) % N;
     }
     
+    private int siguientePrimo(int n) {
+        int candidato = 2 * n + 1;
+
+        while (!esPrimo(candidato)) {
+            candidato += 2;
+        }
+
+        return candidato;
+    }
+
+    private boolean esPrimo(int x) {
+
+        if (x == 2) {
+            return true;
+        }
+
+        // descarta pares
+        if (x % 2 == 0) {
+            return false;
+        }
+
+        // prueba solo divisores impares
+        for (int i = 3; i * i <= x; i += 2) {
+
+            if (x % i == 0) {
+                return false;
+            }
+        }
+        return true;
+    }
 }
