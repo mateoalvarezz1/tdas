@@ -2,7 +2,6 @@ package ar.edu.uns.cs.ed.tdas.tdadiccionario;
 
 import ar.edu.uns.cs.ed.tdas.Entry;
 import ar.edu.uns.cs.ed.tdas.Position;
-import ar.edu.uns.cs.ed.tdas.excepciones.InvalidEntryException;
 import ar.edu.uns.cs.ed.tdas.excepciones.InvalidKeyException;
 import ar.edu.uns.cs.ed.tdas.tdalista.ListaDobleEnlazada;
 import ar.edu.uns.cs.ed.tdas.tdalista.PositionList;
@@ -45,7 +44,6 @@ public class DiccionarioConHashAbierto<K,V> implements Dictionary<K, V>{
 
     @Override
     public Entry<K, V> find(K key) {
-        if(key==null) throw new InvalidKeyException("Clave nula");
         for(Entry<K,V> e : A[h(key)]){
             if(e.getKey().equals(key))
                 return e;
@@ -55,7 +53,6 @@ public class DiccionarioConHashAbierto<K,V> implements Dictionary<K, V>{
 
     @Override
     public Iterable<Entry<K, V>> findAll(K key) {
-        if(key==null) throw new InvalidKeyException("Clave nula");
         ListaDobleEnlazada<Entry<K,V>> lista = new ListaDobleEnlazada<>();
         for(Entry<K,V> e : A[h(key)]){
             if(e.getKey().equals(key)){
@@ -67,7 +64,6 @@ public class DiccionarioConHashAbierto<K,V> implements Dictionary<K, V>{
 
     @Override
     public Entry<K, V> insert(K key, V value) {
-        if(key==null) throw new InvalidKeyException("Clave nula");
         Entry<K,V> var = new Entrada<>(key,value);
         A[h(key)].addLast(var);
         n++;
@@ -76,7 +72,6 @@ public class DiccionarioConHashAbierto<K,V> implements Dictionary<K, V>{
 
     @Override
     public Entry<K, V> remove(Entry<K, V> e) {
-        if(e==null || e.getKey()==null) throw new InvalidEntryException("e Nulo");
         for(Position<Entry<K,V>> p : A[h(e.getKey())].positions()){
             if(p.element()==e){
                 A[h(e.getKey())].remove(p);
@@ -84,7 +79,7 @@ public class DiccionarioConHashAbierto<K,V> implements Dictionary<K, V>{
                 return e;
             }
         }
-        throw new InvalidEntryException("entrada no encontrada");
+        return null;
     }
 
     @Override
@@ -101,4 +96,18 @@ public class DiccionarioConHashAbierto<K,V> implements Dictionary<K, V>{
         return Math.abs(key.hashCode()) % N;
     }
 
+    public Iterable<Entry<K,V>> eliminarTodas(K c,V v) throws InvalidKeyException{
+        if(c==null) throw new InvalidKeyException("clave nula");
+        ListaDobleEnlazada<Entry<K,V>> eliminadas = new ListaDobleEnlazada<>();
+        for(Position<Entry<K,V>> e: A[h(c)].positions()){
+            if(e.element().getKey().equals(c) && e.element().getValue().equals(v)){
+                eliminadas.addLast(e.element());
+                A[h(c)].remove(e);
+                n--;
+            }
+        }
+        return eliminadas;
+    }
+
 }
+1
