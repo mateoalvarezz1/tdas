@@ -107,6 +107,7 @@ public class  Arbol<E> implements Tree<E>{
 
     @Override
     public Position<E> addFirstChild(Position<E> p, E e) {
+        if(raiz==null) throw new InvalidPositionException("Arbol vacio");
         NodoArbol<E> ve = checkPosition(p);
         NodoArbol<E> hijo = new NodoArbol<>(e,ve);
         ve.getHijos().addFirst(hijo);
@@ -116,6 +117,7 @@ public class  Arbol<E> implements Tree<E>{
 
     @Override
     public Position<E> addLastChild(Position<E> p, E e) {
+        if(raiz==null) throw new InvalidPositionException("Arbol vacio");
         NodoArbol<E> ve = checkPosition(p);
         NodoArbol<E> hijo = new NodoArbol<>(e,ve);
         ve.getHijos().addLast(hijo);
@@ -125,10 +127,20 @@ public class  Arbol<E> implements Tree<E>{
 
     @Override
     public Position<E> addBefore(Position<E> p, Position<E> rb, E e) {
+        if(raiz==null) throw new InvalidPositionException("Arbol vacio");
         NodoArbol<E> padre = checkPosition(p);
         NodoArbol<E> antes = checkPosition(rb);
+        boolean esta=false;
+
+        for(NodoArbol<E> c : padre.getHijos()){
+            if(c==antes) esta = true;
+        }
+
+        if(!esta) throw new InvalidPositionException("No es hijo");
+
         NodoArbol<E> insertar = new NodoArbol<>(e,padre);
         cant++;
+        
         for(Position<NodoArbol<E>> n : padre.getHijos().positions()){
             if(n.element()==antes){
                 padre.getHijos().addBefore(n, insertar);
@@ -139,8 +151,17 @@ public class  Arbol<E> implements Tree<E>{
 
     @Override
     public Position<E> addAfter(Position<E> p, Position<E> lb, E e) {
+        if(raiz==null) throw new InvalidPositionException("Arbol vacio");
         NodoArbol<E> padre = checkPosition(p);
         NodoArbol<E> desp = checkPosition(lb);
+        boolean esta = false;
+
+        for(NodoArbol<E> c : padre.getHijos()){
+            if(c==desp) esta = true;
+        }
+
+        if(!esta) throw new InvalidPositionException("No es hijo");
+
         NodoArbol<E> insertar = new NodoArbol<>(e,padre);
         cant++;
         for(Position<NodoArbol<E>> n : padre.getHijos().positions()){
@@ -154,6 +175,8 @@ public class  Arbol<E> implements Tree<E>{
     @Override
     public void removeExternalNode(Position<E> p) {
         NodoArbol<E> pe = checkPosition(p);
+        if(raiz == null) throw new InvalidPositionException("Arbol vacio");
+        if(!pe.getHijos().isEmpty()) throw new InvalidPositionException("Es interno");
         if(pe==raiz){
             raiz=null;
             cant--;
@@ -178,6 +201,7 @@ public class  Arbol<E> implements Tree<E>{
             raiz= pe.getHijos().first().element();
             raiz.setPadre(null);
             cant--;
+            return;
          }
          if(pe!=raiz){
             //busco la posicion del nodo en la lista de hijos del padre e inserto todos los hijos del nodo a eliminar luego borro el nodo y decremento cant
@@ -216,5 +240,4 @@ public class  Arbol<E> implements Tree<E>{
             preorden(p, lista);
         } 
     }
-
 }
