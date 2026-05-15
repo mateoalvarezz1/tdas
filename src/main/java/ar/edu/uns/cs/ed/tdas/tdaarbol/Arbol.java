@@ -7,6 +7,8 @@ import ar.edu.uns.cs.ed.tdas.excepciones.InvalidOperationException;
 import ar.edu.uns.cs.ed.tdas.excepciones.InvalidPositionException;
 import ar.edu.uns.cs.ed.tdas.tdalista.ListaDobleEnlazada;
 import ar.edu.uns.cs.ed.tdas.tdalista.PositionList;
+import ar.edu.uns.cs.ed.tdas.tdamapeo.Map;
+import ar.edu.uns.cs.ed.tdas.tdamapeo.MapeoConHashAbierto;
 import java.util.Iterator;
 
 public class  Arbol<E> implements Tree<E>{
@@ -182,13 +184,14 @@ public class  Arbol<E> implements Tree<E>{
             cant--;
             return;
         }
-        if(pe.getHijos().isEmpty()){
+        if(!pe.getHijos().isEmpty()){
             for(Position<NodoArbol<E>> nodo : pe.getPadre().getHijos().positions()){
                 if(nodo.element()==pe){
                     pe.getPadre().getHijos().remove(nodo);
                     cant--;
                 }
             }
+            
         }
     }
 
@@ -240,4 +243,26 @@ public class  Arbol<E> implements Tree<E>{
             preorden(p, lista);
         } 
     }
+    public void eliminarUltimoHijo(Position<E> p){
+        if(isEmpty()) return;
+        NodoArbol<E> pe = checkPosition(p);
+        if(pe==raiz) throw new InvalidPositionException("La raiz no es ultimo hijo");
+        PositionList<NodoArbol<E>> hijosp = pe.getPadre().getHijos();
+
+        if(hijosp.last().element()==pe){
+            hijosp.remove(hijosp.last());
+            cant--;
+        }
+        else throw new InvalidOperationException("No es el ultimo hijo");
+
+    }
+    public Map<Character, Integer> cantidadRepeticiones(Tree<Character> t){
+        Map<Character, Integer> mapeo = new MapeoConHashAbierto<>();
+        for(Position<Character> na : t.positions()){
+            if(mapeo.get(na.element())==null) mapeo.put(na.element(), 1);
+            else mapeo.put(na.element(), mapeo.get(na.element())+1);
+        }
+        return mapeo;
+    }
+    
 }

@@ -48,14 +48,23 @@ public Dictionary<K,V> acomodar (Dictionary<K,V> d){
 1d.
 
 public Map<K,V> recibe(PositionList<Character> pl) {
-    Map<Character,Integer> mapeo = new MapeoConLista<Character,Integer>();
+    Map<Character,Integer> mapeo = new MapeoConLista<Character,Integer>(); //N.c1
 
-    for (Character c : pl) {
-        if (mapeo.get(c) == null)
-            mapeo.put(c, 1);
+    for (Character c : pl) {    //d, con d cantidad de elementos de la lista
+        if (mapeo.get(c) == null)       //k.c2 
+            mapeo.put(c, 1);            //k.c3
         else
-            mapeo.put(c, mapeo.get(c) + 1);
+            mapeo.put(c, mapeo.get(c) + 1); //k.c4
+
+        //tif = max(k*(c2+c3), k.c4)
+        //d*tif
     }
 
     return mapeo;
-}
+}   //N*c1+d*max(k*(c2+c3), k.c4)+c5 pertenece a O(dk) --> peor caso: d = n en el mapeo --> O(dn)
+    //si tenemos:
+        //1. factor de carga pequenio (cercano a una constante) (no cualquiera, sino muy chica respecto a n)
+        //2. distribucion uniforme de claves
+    //k es muy pequenio respecto a n, tan pequenio que puede ser considerado constante
+    //entonces, puedo reemplazar las apariciones de k por O(1)
+    //entonces el orden de tiempo final quedaria O(d) 
