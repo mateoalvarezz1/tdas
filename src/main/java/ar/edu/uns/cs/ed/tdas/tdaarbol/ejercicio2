@@ -1,0 +1,95 @@
+/*Agregue un método a la clase árbol binario programada en el inciso anterior tal que recorra el árbol en pre-orden y
+retorne un diccionario donde sus entradas tengan como clave al rótulo del padre y como valor a los rótulos de cada
+uno de sus hijos. Los rótulos ubicados en hojas del árbol no deben pertenecer al diccionario, de esta forma en el
+diccionario no pueden existir valores nulos.*/
+
+public Dictionary<K,V> ivan1(){
+    Dictionary<K,V> dic = new DiccionarioConHashAbierto<>();
+    padresHijosAux(root(), dic)
+    return dic;
+}
+
+private void padresHijosAux(Position<E> p, Dictionary<E,E> dic){
+    if(HasLeft(p)){
+        dic.insert(p.element(),left(p).element());
+        padresHijosAux(left(p),dic);
+    }
+    if(HasRight(p)){
+        dic.insert(p.element(),right(p).element());
+        padresHijosAux(right(p),dic);
+    }
+}
+
+//2
+
+/*Un árbol binario de expresión es un árbol binario donde cada uno de sus nodos
+internos están rotulados con operadores y sus hojas con operandos (tal como el que se
+muestra en la figura). 1
+Dado un árbol binario A que representa una expresión aritmética, escriba un método
+recursivo (es decir, no puede usar los iteradores) que retorne un iterable de caracteres
+con la notación infija de la expresión que el árbol representa.
+ */
+
+public ListaDobleEnlazada<E> opera(ArbolB<E> arbol){
+    BTnodo<E> n = arbol.root();
+    ListaDobleEnlazada<E> lista = new ListaDobleEnlazada<>();
+    operaAUX(arbol, n, lista);
+    return lista;
+}
+
+private void operaAUX(ArbolB<E> arbol, Position<E> p, lista){
+
+    //cb es root
+    if(!HasLeft() && !HasRight()){
+        lista.addLast(p.element());
+    }else{
+        operaAUX(arbol,left(p),lista);
+        lista.addLast(p.element());
+        operaAUX(arbol,right(p),lista);
+    }
+
+}
+
+
+//3
+
+/* Escriba un método cuya signatura sea: public void completarDerechos(E r, BinaryTree<E> t)
+tal que agregue como hijos derechos (de aquellos nodos que solo tengan hijo izquierdo) nodos con rótulos r.
+Este método deberá lanzar EmptyTreeException en caso de que el árbol t se encuentre vacío.*/
+
+public void completarDerechos(E r, BinaryTree<E> t){
+    if(t.isEmpty()) throw EmptyTreeException("Arbol vacio");
+    BTnodo<E> n = t.root();
+    completarDerechosAUX(r, t, n);
+    
+}
+private void completarDerechosAUX(E r, BinaryTree<E> t, Position<E> p){
+
+    if(HasLeft(p) && !HasRight(p)){
+        addRight(r,p);
+        completarDerechosAUX(r,t,left(p));
+    }
+    if(HasLeft(p) && HasRight(p)){
+        completarDerechosAUX(r,t,left(p));
+        completarDerechosAUX(r,t,right(p));
+    }
+    if(!HasLeft(p) && HasRight(p)){
+        completarDerechosAUX(r,t,right(p));
+    }
+
+}
+//5
+/*Agregue un método a la clase definida en el ejercicio 1 cuya signatura sea: public void
+eliminarSubarbol(Position<E> p). Este método deberá eliminar del árbol receptor del mensaje todo el
+subárbol con raíz p. Recuerde que para este ejercicio cuenta con acceso total a la estructura y que el método deberá
+lanzar InvalidPositionException si p no es válida. */
+
+public void eliminarSubarbol(Position<E> p){
+    BTnodo<E> nodo = checkPosition(p);
+    
+    if(hasLeft(p)) eliminarSubarbol(left(p));
+    if(hasRight(p)) eliminarSubarbol(right(p));
+    
+    this.remove(p);
+}
+
