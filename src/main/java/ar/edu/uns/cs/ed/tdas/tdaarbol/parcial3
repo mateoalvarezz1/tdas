@@ -1,0 +1,242 @@
+public int cantEntradas(K key){
+    int cont = 0;//c1
+    if(key==null) throw InvalidPositionException("Clave nula");//c2
+    for(Entry<K,V> e : a[h(key)]){ K entradas
+        if(e.getKey().equals(key)){//c4 + c6
+            cont++;//c5
+        }
+    }
+    return cont;//c6
+} //tiempo = c1 + c2 + k(c4+c5) + c6 = O(K) pero como diccionario es de hash abierto y esta bien implementado, el factor de carga
+// es tan chico que se puede considerar como una constante por eso el orden es O(1)
+
+private int h(K key){
+    return math.abs(key.hashCode()) % N; //c5
+}
+
+public void agregar(Position<E> p, E r){
+    Tnodo<E> nodo = checkPosition(P); //c1
+
+    for(Tnodo<E> pos : nodo.getHijos()){ //tiene K nodos (en el peor de los casos son todos los nodos del arbol ya que nos pasan la raiz)
+        agregar(pos); //c2
+    }
+
+    addLastChild(p,r); //c3
+} //tiempo = c1 + K(c2) + c3, como se aclaro antes si consideramos el caso en el que k = cant nodos, tendriamos O(n)
+
+public boolean existeAlMenos(K key, int e){
+    if(key == null) throw InvalidPositionException("Clave nula");//c6
+    if(e==0) return true;//c7
+    int cont = 0; //c1
+    int indice = h(key); //c5
+    for(Entry<K,V> e : buckets[indice]){ tengo K claves en el bucket
+        if(e.getKey().equals(key)){ //c2
+            cont++; //c3
+        }
+    }
+
+    return cont>=e; //c4
+}   //tiempo = c1 + c4 + K(c2+c3) + c5 + c6 + c7 = O(K)
+
+private int h(K key){
+    return math.abs(key.hashCode()) % N; //c5
+}
+
+/*elimine del árbol receptor del mensaje todos los nodos que sean necesarios para convertir la posición p en hoja. 
+El método debe retornar un iterable con todos los elementos de los nodos eliminados. 
+Si p ya es una hoja debe retornar un iterable vacío. Recuerde que cuenta con total acceso a la estructura. */
+
+public iterable<E> convertirAhoja(Position<E> p){
+        Tnodo<E> nodo = checkPosition(P); //c1
+        PositionList<E> lista = new ListaDobleEnlazada<>(); //c2
+
+        for(Position<Tnodo<E>> h : nodo.getHijos().positions()){ //positions es orden n y tengo s hijos
+            Tnodo<E> hijo = h.element(); //c3
+            eliminar(hijo,lista);  //se llama s veces
+        }                                   
+        return lista; //c4
+        //tiempo = c1+c2+c4+???
+}
+
+private void eliminar(Tnodo<E> nodo, PositionList<E> lista){
+
+    for(Tnodo<E> hijo : nodo.getHijos()){  //se recorre k veces porque tengo k hijos
+        eliminar(hijo,lista); //?????
+    }
+
+    lista.addLast(nodo.element()); //c5 O(1)
+    removeExternalNode(nodo);//c6 O(1)
+    //tiempo = c5+c6+??????
+}
+
+//convertir a hoja v2 (aca desconecto todos los hijos y luego cuento el sub arbol)
+public void huerfano(Position<E> p){
+    Tnodo<E> nodo = checkPosition(p);
+
+    for(Tnodo<E> hijo : nodo.getHijos()){
+        hijo.setPadre(null);
+        cont++;
+    }
+}
+
+/*"Escriba un método que reciba un árbol de caracteres y retorne un mapeo cuyas claves sean cada una de las vocales y sus respectivos 
+valores la cantidad de veces que aparece cada vocal en el árbol. Para resolver este ejercicio debe implementar un único recorrido en 
+posorden y sin usar los iteradores del árbol (ni iterator ni positions). Considere solo letras en minúscula. 
+Asuma que cuenta con los TDAs Arbol y Mapeo totalmente implementados. Si utiliza métodos auxiliares debe implementarlos."
+ */
+
+public Map<Character,Integer> vocales(Tree<Character> arbol){
+
+    Map<Character,Integer> mapeo = new Mapeo<>(); //c1
+
+        if(arbol==null) return mapeo; //
+
+    try{
+
+        vocalAUX(arbol.root(), mapeo);
+        return mapeo;
+
+    } catch(EmptyTreeException e){
+
+        return mapeo;
+    }
+}
+
+public void vocalAUX(Position<Character> p, Map<Character,Integer> mapeo){
+
+    Tnodo<Character> nodo = checkPosition(p);
+    for(Tnodo<Character> hijo : nodo.getHijos()){
+        vocalAUX(hijo,mapeo);
+    }
+
+    if(esVocal(nodo.element())){
+        Character elem = nodo.element();
+        if(mapeo.get(elem)==null) mapeo.put(elem,1);
+        else mapeo.put(elem,mapeo.get(elem)+1)
+    }
+
+}
+
+private boolean esVocal(char c){
+    return c=='a' || c=='e' || c=='i' || c=='o' || c=='u';
+}
+
+
+/* Suponiendo que cuenta con una clase Arbol<E> que implementa la interfaz Tree<E> vista en
+clase. Esta clase utiliza la implementación de lista de hijos y enlace al padre. Agregue un método a esta
+clase cuya signatura sea public int sizeSubarbol(Position<E> p) throws
+InvalidPositionException. Este método deberá retornar el tamaño del subárbol con raíz p del árbol
+receptor del mensaje. Si utiliza otros métodos del TDAArbol deberá implementarlos */
+
+public int sizeSubarbol(Position<E> p){
+    Tnodo<E> nodo = checkPosition(p); //c1
+    if(nodo==raiz) return size(); //c2 O(1)
+    return contarSubArbol(nodo); //O(K) donde k es el tamanio del subarbol
+    //tiempo = c1 + max(c2,O(K)) = O(K)
+}
+
+private int contarSubArbol(Tnodo<E> nodo){
+    int cont=1; //S(c4)
+    for(Tnodo<E> hijo : nodo.getHijos()){ //en total sobre todas las llamadas: s-1 iteracione
+        cont += contarSubArbol(hijo); //c5
+    }
+    return cont;//c6
+}
+
+/* Dado un árbol de caracteres A, un entero x representando un nivel del árbol y un carácter c,
+escriba un método que inserte a c como hijo de cada nodo de A que esté en el nivel x y que sea hoja. Por
+ejemplo (x=2, c= w): */
+
+public void insertarNivel(Tree<Character> arbol, char c, int x){
+    if(arbol==null) throw new InvalidPositionException("Arbol vacio"); //c8
+    for(Position<E> nodo : arbol.positions()){ //se va a ejecutar S veces donde S es la cantidad de nodos del arbol
+        if(nivel(nodo)==x && vacio(nodo)){ // O(S) + c10
+            arbol.addLastChild(nodo, c); //c11
+        }
+    }
+
+    //tiempo = c8 + S(S+c10+c11) = O(S^2)
+}
+
+private int nivel(Position<E> nodo){
+    Tnodo<E> n = checkPosition(nodo);//c3
+    int cont = 0;//c4
+    while(n!=null){ se ejecuta k veces donde k es la cantidad de padres del nodo
+        n=n.getPadre(); //c5
+        cont++;//c6
+    }
+    return cont-1;//c7
+    //tiempo = c3 + c4 +k(c5+c6) + c7 = O(k) pero en el peor de los casos esta abajo del todo en el arbol 
+                                        //por lo tanto me quedaria de O(S)
+}
+
+private boolean vacio(Position<E> nodo){ 
+    Tnodo<E> n = checkPosition(nodo); //c1
+    return n.getHijos().isEmpty(); //c2
+    //tiempo = c1 + c2 = O(1)
+}
+
+//3 /* Este método recibe un árbol binario a, que representa una
+expresión aritmética, y retorna un mapeo cuyas claves son las operaciones aritméticas (+, -, *, /) cuyos
+valores asociados corresponden a la cantidad de veces que aparece el operador en a. Recuerde que en un
+árbol binario de expresión los operadores se encuentran en los nodos internos y los operandos en las hojas.
+Por ejemplo, para el árbol de la figura el mapeo resultante debería ser: {(+, 2), (-, 1), (*, 1), (/, 0)}.
+Recuerde que la interfaz BinaryTree vista en clase extiende a la interfaz GTTee */
+
+public Map<Character, Integer> cantOperadores(BinaryTree<Character> a){
+
+    Map<Character,Integer> mapeo = new MapeoConLista<>();
+    mapeo.put('+', 0);
+    mapeo.put('*', 0);
+    mapeo.put('/', 0);
+    mapeo.put('-', 0);
+
+    for(Position<Character> nodo : a.positions()){
+        if(a.isInternal(nodo)){
+            Character c = nodo.element();
+            mapeo.put(c,mapeo.get(c)+1);
+        }
+    }
+
+    return mapeo;
+}
+
+public void removeNode(Position<E> p) {
+        if(isEmpty()){
+            throw new InvalidPositionException("Arbol vacio, no se puede eliminar");
+        }
+        Nodo<E> nodo = checkPosition(p);
+        Nodo<E> hijoIzquierdo = nodo.getLeft();
+        Nodo<E> hijoDerecho = nodo.getRight();
+        if(hijoIzquierdo != null && hijoDerecho != null){
+            throw new InvalidPositionException("No se puede eliminar un nodo con dos hijos, el padre no puede apuntar a dos nodos, solo tiene una unica referencia");
+        }
+        Nodo<E> hijo;
+        if(hijoIzquierdo != null){
+            hijo = hijoIzquierdo;
+        }else{
+            hijo = hijoDerecho;
+        }
+        if(nodo == raiz){
+            raiz = hijo;
+            if(hijo != null){
+                hijo.setParent(null);
+            }
+        }
+        else{
+            Nodo<E> padre = nodo.getParent();
+            if(padre.getLeft() == nodo){
+                padre.setLeft(hijo);
+            }
+            else if(padre.getRight() == nodo){
+                padre.setRight(hijo);
+            }
+            else{
+                throw new InvalidPositionException("La estructura del arbol es invalida");
+            }
+            if(hijo != null){
+                hijo.setParent(padre);
+            }
+        }
+        size--;
+    }

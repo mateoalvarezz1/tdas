@@ -184,11 +184,11 @@ public class  Arbol<E> implements Tree<E>{
             cant--;
             return;
         }
-        if(!pe.getHijos().isEmpty()){
-            for(Position<NodoArbol<E>> nodo : pe.getPadre().getHijos().positions()){
-                if(nodo.element()==pe){
-                    pe.getPadre().getHijos().remove(nodo);
-                    cant--;
+        for(Position<NodoArbol<E>> nodo : pe.getPadre().getHijos().positions()){
+            if(nodo.element()==pe){
+                pe.getPadre().getHijos().remove(nodo);
+                cant--;
+                break;
                 }
             }
             

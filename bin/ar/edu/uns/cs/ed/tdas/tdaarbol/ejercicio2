@@ -4,17 +4,17 @@ uno de sus hijos. Los rótulos ubicados en hojas del árbol no deben pertenecer 
 diccionario no pueden existir valores nulos.*/
 
 public Dictionary<K,V> ivan1(){
-    Dictionary<K,V> dic = new DiccionarioConHashAbierto<>();
-    padresHijosAux(root(), dic)
-    return dic;
+    Dictionary<K,V> dic = new DiccionarioConHashAbierto<>(); //c1
+    padresHijosAux(root(), dic) // recorro todos los nodos del arbol, entonces es n(c10)
+    return dic;//c3
 }
 
 private void padresHijosAux(Position<E> p, Dictionary<E,E> dic){
-    if(HasLeft(p)){
+    if(HasLeft(p)){//c1
         dic.insert(p.element(),left(p).element());
         padresHijosAux(left(p),dic);
     }
-    if(HasRight(p)){
+    if(HasRight(p)){//c2
         dic.insert(p.element(),right(p).element());
         padresHijosAux(right(p),dic);
     }
@@ -32,20 +32,22 @@ con la notación infija de la expresión que el árbol representa.
 
 public ListaDobleEnlazada<E> opera(ArbolB<E> arbol){
     BTnodo<E> n = arbol.root();
-    ListaDobleEnlazada<E> lista = new ListaDobleEnlazada<>();
+    PositionList<E> lista = new ListaDobleEnlazada<>();
     operaAUX(arbol, n, lista);
     return lista;
 }
 
-private void operaAUX(ArbolB<E> arbol, Position<E> p, lista){
+private void operaAUX(ArbolB<E> arbol, Position<E> p, PositionList<E> lista){
 
     //cb es root
-    if(!HasLeft() && !HasRight()){
+    if(!HasLeft() && !HasRight()){ //se puede preguntar si arbol.isExternal(p)
         lista.addLast(p.element());
     }else{
-        operaAUX(arbol,left(p),lista);
-        lista.addLast(p.element());
-        operaAUX(arbol,right(p),lista);
+        lista.addLast("("); //c1
+        operaAUX(arbol,left(p),lista);//c2
+        lista.addLast(p.element());//c3
+        operaAUX(arbol,right(p),lista);//c4
+        lista.addLast(")");//c5
     }
 
 }
@@ -85,11 +87,10 @@ subárbol con raíz p. Recuerde que para este ejercicio cuenta con acceso total 
 lanzar InvalidPositionException si p no es válida. */
 
 public void eliminarSubarbol(Position<E> p){
-    BTnodo<E> nodo = checkPosition(p);
+    BTnodo<E> nodo = checkPosition(p); //c1
     
-    if(hasLeft(p)) eliminarSubarbol(left(p));
-    if(hasRight(p)) eliminarSubarbol(right(p));
-    
-    this.remove(p);
-}
+    if(hasLeft(p)) eliminarSubarbol(left(p));//
+    if(hasRight(p)) eliminarSubarbol(right(p));//    
+    this.remove(p);//c4
+}//O(max(k1,k2))
 
